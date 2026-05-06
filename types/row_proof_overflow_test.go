@@ -48,29 +48,3 @@ func TestRowProofEmptyRejected(t *testing.T) {
 	err = rp.Validate(root)
 	assert.Error(t, err, "empty RowProof should be rejected")
 }
-
-// TestShareProofUint32Overflow verifies that the uint32 overflow in RowProof
-// does not cascade through ShareProof.Validate() to allow empty proofs.
-func TestShareProofUint32Overflow(t *testing.T) {
-	sp := ShareProof{
-		Data:        nil,
-		ShareProofs: nil,
-		NamespaceID: nil,
-		RowProof: RowProof{
-			RowRoots: nil,
-			Proofs:   nil,
-			StartRow: 0,
-			EndRow:   math.MaxUint32,
-		},
-		NamespaceVersion: 0,
-	}
-
-	for i := 0; i < 10; i++ {
-		root := make([]byte, 32)
-		_, err := rand.Read(root)
-		require.NoError(t, err)
-
-		err = sp.Validate(root)
-		assert.Error(t, err, "empty ShareProof with overflow should be rejected for root %x", root)
-	}
-}

@@ -9,8 +9,7 @@ import (
 	crypto "github.com/cometbft/cometbft/proto/tendermint/crypto"
 	types "github.com/cometbft/cometbft/proto/tendermint/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
-	grpc1 "github.com/cosmos/gogoproto/grpc"
-	proto "github.com/cosmos/gogoproto/proto"
+	proto "github.com/gogo/protobuf/proto"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -901,10 +900,10 @@ type PrivValidatorAPIClient interface {
 }
 
 type privValidatorAPIClient struct {
-	cc grpc1.ClientConn
+	cc *grpc.ClientConn
 }
 
-func NewPrivValidatorAPIClient(cc grpc1.ClientConn) PrivValidatorAPIClient {
+func NewPrivValidatorAPIClient(cc *grpc.ClientConn) PrivValidatorAPIClient {
 	return &privValidatorAPIClient{cc}
 }
 
@@ -943,7 +942,7 @@ func (*UnimplementedPrivValidatorAPIServer) GetPubKey(ctx context.Context, req *
 	return nil, status.Errorf(codes.Unimplemented, "method GetPubKey not implemented")
 }
 
-func RegisterPrivValidatorAPIServer(s grpc1.Server, srv PrivValidatorAPIServer) {
+func RegisterPrivValidatorAPIServer(s *grpc.Server, srv PrivValidatorAPIServer) {
 	s.RegisterService(&_PrivValidatorAPI_serviceDesc, srv)
 }
 
@@ -983,7 +982,6 @@ func _PrivValidatorAPI_GetPubKey_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-var PrivValidatorAPI_serviceDesc = _PrivValidatorAPI_serviceDesc
 var _PrivValidatorAPI_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "tendermint.privval.PrivValidatorAPI",
 	HandlerType: (*PrivValidatorAPIServer)(nil),
